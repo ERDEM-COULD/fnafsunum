@@ -166,12 +166,11 @@
 
             if (type === 'pdf') {
                 const savedPage = localStorage.getItem('pdf_page') || 1;
-                targetUrl = `sunum.pdf#page=${savedPage}&view=FitH&toolbar=0&navpanes=0`;
+                // PDF dosya adı FnafSunum.pdf olarak güncellendi
+                targetUrl = `FnafSunum.pdf#page=${savedPage}&view=FitH&toolbar=0&navpanes=0`;
             } else if (type === 'odp') {
-                // ODP dosyaları için LibreOffice/OpenOffice web sunucu eklentileri veya 
-                // doğrudan tarayıcı içi gösterim parametreleri (Örn: LibreOffice Online / Collabora tabanlı entegrasyonlar)
-                // Yerel dosya adı 'sunum.odp' olarak ayarlanmıştır.
-                targetUrl = `sunum.odp`;
+                // ODP dosya adı FnafSunum.odp
+                targetUrl = `FnafSunum.odp`;
             }
 
             presentationFrame.src = targetUrl;
