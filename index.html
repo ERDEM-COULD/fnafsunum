@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunum Portalı</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-pdf: #ef4444;
+            --accent-odp: #06b6d4;
+            --hover-pdf: #dc2626;
+            --hover-odp: #0891b2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Ana Menü */
+        #menu-container {
+            text-align: center;
+            background: var(--card-bg);
+            padding: 3rem 4rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .btn {
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-pdf {
+            background-color: var(--accent-pdf);
+        }
+        .btn-pdf:hover {
+            background-color: var(--hover-pdf);
+        }
+
+        .btn-odp {
+            background-color: var(--accent-odp);
+        }
+        .btn-odp:hover {
+            background-color: var(--hover-odp);
+        }
+
+        /* Sunum Ekranı */
+        #viewer-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            z-index: 1000;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Geri Dönüş Butonu */
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            z-index: 1001;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ana Menü Ekranı -->
+    <div id="menu-container">
+        <h1>Sunum Seçiniz</h1>
+        <div class="button-group">
+            <button class="btn btn-pdf" onclick="openPresentation('pdf')">PDF ile Aç (Sunum Modu)</button>
+            <button class="btn btn-odp" onclick="openPresentation('odp')">ODP ile Aç (Sunum Modu)</button>
+        </div>
+    </div>
+
+    <!-- Sunum Görüntüleme Ekranı -->
+    <div id="viewer-container">
+        <button class="back-btn" onclick="returnToMenu()">← Ana Menü</button>
+        <iframe id="presentation-frame" src=""></iframe>
+    </div>
+
+    <script>
+        const menuContainer = document.getElementById('menu-container');
+        const viewerContainer = document.getElementById('viewer-container');
+        const presentationFrame = document.getElementById('presentation-frame');
+
+        // Sayfa açıldığında hafızada son kaldığı yer var mı kontrol et ve direkt aç
+        window.addEventListener('DOMContentLoaded', () => {
+            const lastType = localStorage.getItem('active_presentation_type');
+            if (lastType) {
+                openPresentation(lastType, false);
+            }
+        });
+
+        function openPresentation(type, saveState = true) {
+            if (saveState) {
+                localStorage.setItem('active_presentation_type', type);
+            }
+
+            menuContainer.style.display = 'none';
+            viewerContainer.style.display = 'block';
+
+            let targetUrl = '';
+
+            if (type === 'pdf') {
+                const savedPage = localStorage.getItem('pdf_page') || 1;
+                targetUrl = `sunum.pdf#page=${savedPage}&view=FitH&toolbar=0&navpanes=0`;
+            } else if (type === 'odp') {
+                // ODP dosyaları için LibreOffice/OpenOffice web sunucu eklentileri veya 
+                // doğrudan tarayıcı içi gösterim parametreleri (Örn: LibreOffice Online / Collabora tabanlı entegrasyonlar)
+                // Yerel dosya adı 'sunum.odp' olarak ayarlanmıştır.
+                targetUrl = `sunum.odp`;
+            }
+
+            presentationFrame.src = targetUrl;
+        }
+
+        function returnToMenu() {
+            viewerContainer.style.display = 'none';
+            menuContainer.style.display = 'block';
+            presentationFrame.src = '';
+        }
+    </script>
+</body>
+</html>
